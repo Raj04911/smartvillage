@@ -1,0 +1,14 @@
+.analytics-card {
+  display: flex;
+  gap: 20px;
+}
+
+.chart-placeholder {
+  background: white;
+  height: 250px;
+  flex: 1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

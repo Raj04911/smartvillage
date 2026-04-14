@@ -1,0 +1,25 @@
+.crops-page {
+  padding: 20px;
+}
+
+.crops-header {
+  margin-bottom: 25px;
+}
+
+.crops-header h2 {
+  margin-bottom: 6px;
+}
+
+.crops-header p {
+  font-size: 14px;
+  color: #555;
+}
+
+.crops-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  );
+  gap: 20px;
+}

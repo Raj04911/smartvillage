@@ -1,0 +1,21 @@
+.notification-card {
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.unread {
+  background: #dcfce7;
+}
+
+.read {
+  background: #f3f4f6;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: 600;
+}

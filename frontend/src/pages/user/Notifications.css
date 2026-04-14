@@ -1,0 +1,31 @@
+.notifications-page {
+  padding: 20px;
+}
+
+.notifications-header {
+  margin-bottom: 25px;
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notification-card {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notification-message {
+  font-weight: 500;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #777;
+}

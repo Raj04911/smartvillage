@@ -1,0 +1,11 @@
+.settings-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 500px;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+}

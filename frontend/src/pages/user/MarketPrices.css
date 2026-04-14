@@ -1,0 +1,48 @@
+.market-page {
+  padding: 20px;
+}
+
+.market-header {
+  margin-bottom: 25px;
+}
+
+.market-header h2 {
+  margin-bottom: 6px;
+}
+
+.market-header p {
+  color: #555;
+  font-size: 14px;
+}
+
+.market-card {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.market-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.market-table th,
+.market-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.market-table th {
+  background: #f3f4f6;
+}
+
+.up {
+  color: green;
+  font-weight: 600;
+}
+
+.down {
+  color: red;
+  font-weight: 600;
+}

@@ -1,0 +1,34 @@
+.admin-page {
+  padding: 20px;
+}
+
+.orders-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.status.pending {
+  background: orange;
+}
+
+.status.approved {
+  background: blue;
+  color: white;
+}
+
+.status.delivered {
+  background: green;
+  color: white;
+}

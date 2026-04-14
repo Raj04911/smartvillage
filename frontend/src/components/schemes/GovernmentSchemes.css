@@ -1,0 +1,44 @@
+.schemes-wrapper {
+  height: 45px;
+  background-color: #14532d;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: white;
+  border-top: 1px solid #0f3d24;
+}
+
+.schemes-track {
+  display: flex;
+  white-space: nowrap;
+  animation: scrollLeft 25s linear infinite;
+}
+
+.scheme-item {
+  display: flex;
+  align-items: center;
+  margin-right: 60px;
+  font-size: 14px;
+}
+
+.scheme-icon {
+  margin-right: 6px;
+}
+
+.scheme-title {
+  font-weight: 600;
+  margin-right: 6px;
+}
+
+.scheme-desc {
+  opacity: 0.9;
+}
+
+@keyframes scrollLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

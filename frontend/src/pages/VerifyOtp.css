@@ -1,0 +1,65 @@
+.verify-container {
+  height: 100vh;
+  background: linear-gradient(to right, #2f855a, #1a202c);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.verify-box {
+  width: 400px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+}
+
+.verify-box h2 {
+  color: #2f855a;
+  margin-bottom: 10px;
+}
+
+.verify-box p {
+  font-size: 14px;
+  margin-bottom: 20px;
+  color: #555;
+}
+
+.otp-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 18px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  letter-spacing: 4px;
+}
+
+.verify-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #2f855a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.verify-btn:hover {
+  background-color: #276749;
+}
+
+.resend-section {
+  margin-top: 20px;
+}
+
+.resend-btn {
+  background: none;
+  border: none;
+  color: #2f855a;
+  cursor: pointer;
+  font-weight: bold;
+}
