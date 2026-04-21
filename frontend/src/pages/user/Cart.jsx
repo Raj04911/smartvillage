@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { formatCurrency } from "../../utils/formatCurrency";
+import api from "../../utils/api";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -47,13 +47,17 @@ const Cart = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/orders/create", {
-        userId: user.email,
+      await api.post("/orders/create", {
+        userId: user._id || user.email,
         userName: user.name,
         userEmail: user.email,
+        state: user.state,
+        district: user.district,
         items: cart.map((item) => ({
-          cropId: item._id || item.id,
+          cropId: item.cropId || item._id || item.id,
           name: item.name,
+          state: item.state,
+          district: item.district,
           price: item.price,
           quantity: item.quantity,
           total: item.total

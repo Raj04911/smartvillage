@@ -18,8 +18,9 @@ const Navbar = ({ onLogout, user }) => {
   return (
     <div className="navbar">
       <div className="navbar-left">
-        <div className="navbar-title">
-          Smart Village Dashboard
+        <div>
+          <div className="navbar-kicker">Live Operations</div>
+          <div className="navbar-title">Smart Agriculture Dashboard</div>
         </div>
       </div>
 
@@ -29,8 +30,11 @@ const Navbar = ({ onLogout, user }) => {
       </div>
 
       <div className="navbar-right">
+        <div className="navbar-role">
+          {user?.role === "admin" ? "Admin Control" : "User Workspace"}
+        </div>
         <div className="navbar-user">
-          {user?.name}
+          {user?.name || "Guest"}
         </div>
         <button className="logout-btn" onClick={onLogout}>
           Logout

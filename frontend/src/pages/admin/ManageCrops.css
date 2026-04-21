@@ -1,89 +1,151 @@
-.manage-crops {
-  padding: 20px;
-}
-
-.page-header {
-  margin-bottom: 25px;
-}
-
-.page-header h2 {
-  margin-bottom: 6px;
-}
-
-.page-header p {
-  font-size: 14px;
-  color: #555;
-}
-
-.form-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-}
-
-.form-group {
-  margin-bottom: 15px;
+.manage-crops,
+.manage-users,
+.admin-page,
+.orders-page,
+.cart-page {
   display: flex;
   flex-direction: column;
+  gap: 22px;
 }
 
-.form-group label {
-  margin-bottom: 6px;
-  font-size: 14px;
+.page-header h2,
+.page-header p,
+.admin-header h2,
+.admin-header p {
+  margin: 0;
 }
 
-.form-group input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+.page-header p,
+.admin-header p {
+  margin-top: 8px;
+  color: var(--muted);
 }
 
-.add-btn {
-  padding: 10px 16px;
-  background: #14532d;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.table-section,
+.users-table-section,
+.admin-card,
+.cart-table-section,
+.recent-section,
+.market-card,
+.empty-cart,
+.empty-orders {
+  background: rgba(255, 252, 245, 0.9);
+  border: 1px solid rgba(32, 79, 56, 0.1);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
 }
 
-.add-btn:hover {
-  background: #0f3d2e;
+.table-section,
+.users-table-section,
+.cart-table-section,
+.admin-card {
+  padding: 22px;
 }
 
-.table-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.crop-table {
+.crop-table,
+.users-table,
+.cart-table {
   width: 100%;
   border-collapse: collapse;
 }
 
 .crop-table th,
-.crop-table td {
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+.crop-table td,
+.users-table th,
+.users-table td,
+.cart-table th,
+.cart-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid rgba(32, 79, 56, 0.08);
   text-align: left;
-  font-size: 14px;
 }
 
-.crop-table th {
-  background: #f3f4f6;
+.crop-table th,
+.users-table th,
+.cart-table th {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.delete-btn {
-  padding: 6px 10px;
+.status-badge {
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.status-badge.active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.blocked {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-card input,
+.admin-card select,
+.admin-card textarea,
+.cart-table input {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(32, 79, 56, 0.12);
+  background: white;
+}
+
+.primary-btn,
+.order-btn,
+.remove-btn {
   border: none;
-  background: #dc2626;
-  color: white;
-  border-radius: 4px;
+  border-radius: 14px;
+  padding: 12px 16px;
   cursor: pointer;
 }
 
-.delete-btn:hover {
-  background: #b91c1c;
+.primary-btn,
+.order-btn {
+  background: linear-gradient(135deg, #204f38, #2b6b4b);
+  color: #fff;
+}
+
+.remove-btn {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  color: white;
+}
+
+.cart-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.total-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .form-row,
+  .cart-summary {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

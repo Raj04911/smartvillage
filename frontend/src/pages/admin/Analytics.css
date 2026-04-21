@@ -1,14 +1,13 @@
-.analytics-card {
+.admin-page {
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 22px;
 }
 
-.chart-placeholder {
-  background: white;
-  height: 250px;
-  flex: 1;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.analytics-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(32, 79, 56, 0.1);
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: var(--shadow);
 }

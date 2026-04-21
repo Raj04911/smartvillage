@@ -1,5 +1,5 @@
-import React from "react";
-import { Line } from "react-chartjs-2";
+import React, { useEffect, useState } from "react";
+import { Bar, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   LineElement,
@@ -7,8 +7,10 @@ import {
   LinearScale,
   PointElement,
   Tooltip,
-  Legend
+  Legend,
+  BarElement
 } from "chart.js";
+import api from "../../utils/api";
 import "./Analytics.css";
 
 ChartJS.register(
@@ -17,19 +19,50 @@ ChartJS.register(
   LinearScale,
   PointElement,
   Tooltip,
-  Legend
+  Legend,
+  BarElement
 );
 
 const Analytics = () => {
+  const [analytics, setAnalytics] = useState(null);
+
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      try {
+        const response = await api.get("/admin/analytics");
+        setAnalytics(response.data.analytics);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadAnalytics();
+  }, []);
+
+  if (!analytics) {
+    return <div className="admin-page">Loading analytics...</div>;
+  }
+
   const userGrowth = {
-    labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+    labels: analytics.growthLabels,
     datasets: [
       {
         label: "New Users",
-        data: [20, 40, 60, 80],
+        data: analytics.growthValues,
         borderColor: "#1e40af",
         backgroundColor: "#1e40af",
         tension: 0.4
+      }
+    ]
+  };
+
+  const cropPerformance = {
+    labels: analytics.cropPerformance.map((item) => item.label),
+    datasets: [
+      {
+        label: "Crop AI Score",
+        data: analytics.cropPerformance.map((item) => item.value),
+        backgroundColor: "#2f855a"
       }
     ]
   };
@@ -38,11 +71,15 @@ const Analytics = () => {
     <div className="admin-page">
       <div className="admin-header">
         <h2>Analytics Dashboard</h2>
-        <p>User growth & performance tracking</p>
+        <p>User growth and crop performance tracking from live data</p>
       </div>
 
       <div className="analytics-card">
         <Line data={userGrowth} />
+      </div>
+
+      <div className="analytics-card">
+        <Bar data={cropPerformance} />
       </div>
     </div>
   );

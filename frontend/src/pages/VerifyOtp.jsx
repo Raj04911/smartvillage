@@ -1,49 +1,51 @@
 import React, { useState, useEffect } from "react";
 import "./VerifyOtp.css";
 import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
 const VerifyOtp = () => {
   const [otp, setOtp] = useState("");
-  const [tempUser, setTempUser] = useState(null);
+  const [pendingAuth, setPendingAuth] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("tempUser"));
-    if (!storedUser) {
+    const storedAuth = JSON.parse(localStorage.getItem("pendingAuth"));
+    if (!storedAuth) {
       navigate("/");
     } else {
-      setTempUser(storedUser);
+      setPendingAuth(storedAuth);
     }
   }, [navigate]);
 
-  const handleVerify = (e) => {
-    e.preventDefault();
+  const handleVerify = async (event) => {
+    event.preventDefault();
+    setLoading(true);
 
-    if (otp !== "123456") {
-      alert("Use 123456");
-      return;
-    }
+    try {
+      const response = await api.post("/auth/verify-otp", {
+        email: pendingAuth?.email,
+        otp
+      });
 
-    let role = "user";
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.removeItem("pendingAuth");
 
-    if (tempUser.email === "admin@gmail.com") {
-      role = "admin";
-    }
+      if (response.data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      if (error.response?.data?.requiresSignup) {
+        localStorage.removeItem("pendingAuth");
+        navigate("/signup");
+        return;
+      }
 
-    const fakeUser = {
-      id: tempUser.email,
-      name: tempUser.name,
-      email: tempUser.email,
-      role: role
-    };
-
-    localStorage.setItem("user", JSON.stringify(fakeUser));
-    localStorage.removeItem("tempUser");
-
-    if (role === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/dashboard");
+      alert(error.response?.data?.message || "Invalid OTP");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,24 +53,26 @@ const VerifyOtp = () => {
     <div className="verify-container">
       <div className="verify-box">
         <h2>Verify OTP</h2>
-        <p>Enter OTP sent to {tempUser?.email}</p>
+        <p>Enter OTP sent to {pendingAuth?.email}</p>
 
         <form onSubmit={handleVerify}>
           <input
             type="text"
             value={otp}
             maxLength="6"
-            onChange={(e) => setOtp(e.target.value)}
+            onChange={(event) => setOtp(event.target.value)}
             className="otp-input"
           />
-          <button type="submit" className="verify-btn">
-            Verify OTP
+          <button type="submit" className="verify-btn" disabled={loading}>
+            {loading ? "Verifying..." : "Verify OTP"}
           </button>
         </form>
 
-        <div style={{ marginTop: "10px", fontSize: "12px" }}>
-          Demo OTP: 123456
-        </div>
+        {pendingAuth?.devOtp ? (
+          <div className="dev-otp-note">Development OTP: {pendingAuth.devOtp}</div>
+        ) : (
+          <div className="dev-otp-note">Check your inbox for the OTP email.</div>
+        )}
       </div>
     </div>
   );

@@ -19,12 +19,16 @@ import "./AdminLayout.css";
 const AdminLayout = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "admin") {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser || storedUser.role !== "admin") {
       navigate("/");
+      return;
     }
+
+    setUser(storedUser);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -45,6 +49,7 @@ const AdminLayout = () => {
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           onLogout={handleLogout}
+          user={user}
         />
 
         <div className="content-area">

@@ -15,9 +15,11 @@ const Sidebar = ({ collapsed, setCollapsed, role }) => {
 
   return (
     <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-      
       <div className="sidebar-header">
-        <h2>{collapsed ? "SV" : "Smart Village"}</h2>
+        <h2>{collapsed ? "SC" : "Smart Crop Grid"}</h2>
+        {!collapsed ? (
+          <p>{role === "admin" ? "Operations and intelligence" : "Buying and market insights"}</p>
+        ) : null}
       </div>
 
       <ul className="sidebar-links">

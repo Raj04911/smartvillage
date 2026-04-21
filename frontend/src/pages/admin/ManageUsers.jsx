@@ -1,31 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import api from "../../utils/api";
 import "./ManageUsers.css";
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState([
-    { id: 1, name: "Ravi Kumar", email: "ravi@gmail.com", status: "Active" },
-    { id: 2, name: "Anita Sharma", email: "anita@gmail.com", status: "Blocked" },
-    { id: 3, name: "Mohit Singh", email: "mohit@gmail.com", status: "Active" },
-    { id: 4, name: "Suresh Yadav", email: "suresh@gmail.com", status: "Active" }
-  ]);
+  const [users, setUsers] = useState([]);
 
-  const toggleStatus = (id) => {
-    const updatedUsers = users.map((user) =>
-      user.id === id
-        ? {
-            ...user,
-            status: user.status === "Active" ? "Blocked" : "Active"
-          }
-        : user
-    );
-    setUsers(updatedUsers);
-  };
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const response = await api.get("/auth/users");
+        setUsers(response.data.users);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadUsers();
+  }, []);
 
   return (
     <div className="manage-users">
       <div className="page-header">
         <h2>Manage Users</h2>
-        <p>View and control user accounts</p>
+        <p>Live verified users and their district profiles</p>
       </div>
 
       <div className="users-table-section">
@@ -35,17 +32,19 @@ const ManageUsers = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Email</th>
+              <th>Location</th>
               <th>Status</th>
-              <th>Action</th>
+              <th>Role</th>
             </tr>
           </thead>
 
           <tbody>
             {users.map((user) => (
-              <tr key={user.id}>
-                <td>#{user.id}</td>
+              <tr key={user._id}>
+                <td>#{user._id.slice(-5)}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
+                <td>{user.district}, {user.state}</td>
                 <td>
                   <span
                     className={`status-badge ${
@@ -55,16 +54,7 @@ const ManageUsers = () => {
                     {user.status}
                   </span>
                 </td>
-                <td>
-                  <button
-                    className={`action-btn ${
-                      user.status === "Active" ? "block" : "unblock"
-                    }`}
-                    onClick={() => toggleStatus(user.id)}
-                  >
-                    {user.status === "Active" ? "Block" : "Unblock"}
-                  </button>
-                </td>
+                <td>{user.role}</td>
               </tr>
             ))}
           </tbody>

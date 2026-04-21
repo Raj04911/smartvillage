@@ -1,38 +1,29 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import "./AdminOrders.css";
 
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get("/orders/all");
+        setOrders(res.data.orders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     fetchOrders();
   }, []);
 
-  const fetchOrders = async () => {
-    try {
-      const res = await axios.get(
-        "http://localhost:5000/api/orders/all"
-      );
-      setOrders(res.data.orders);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const updateStatus = async (orderId, status) => {
     try {
-      await axios.put(
-        `http://localhost:5000/api/orders/update/${orderId}`,
-        { status }
-      );
+      const response = await api.put(`/orders/update/${orderId}`, { status });
 
       setOrders((prev) =>
-        prev.map((order) =>
-          order._id === orderId
-            ? { ...order, status }
-            : order
-        )
+        prev.map((order) => (order._id === orderId ? response.data.order : order))
       );
     } catch (error) {
       console.error(error);
@@ -41,7 +32,10 @@ const AdminOrders = () => {
 
   return (
     <div className="admin-page">
-      <h2>Manage Orders</h2>
+      <div className="admin-header">
+        <h2>Manage Orders</h2>
+        <p>Advance orders through the three-stage delivery tracker.</p>
+      </div>
 
       <div className="orders-table">
         <table>
@@ -71,12 +65,10 @@ const AdminOrders = () => {
                 <td>
                   <select
                     value={order.status}
-                    onChange={(e) =>
-                      updateStatus(order._id, e.target.value)
-                    }
+                    onChange={(event) => updateStatus(order._id, event.target.value)}
                   >
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
+                    <option value="Ordered">Ordered</option>
+                    <option value="Shipped">Shipped</option>
                     <option value="Delivered">Delivered</option>
                   </select>
                 </td>

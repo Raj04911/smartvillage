@@ -20,12 +20,16 @@ import "./UserLayout.css";
 const UserLayout = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "user") {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (!storedUser || storedUser.role !== "user") {
       navigate("/");
+      return;
     }
+
+    setUser(storedUser);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -46,6 +50,7 @@ const UserLayout = () => {
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           onLogout={handleLogout}
+          user={user}
         />
 
         <div className="content-area">

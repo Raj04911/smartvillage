@@ -1,64 +1,88 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/api";
+import { sendOtpEmail } from "../utils/sendOtpEmail";
 import "./Login.css";
-import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSendOtp = (e) => {
-    e.preventDefault();
+  const handleSendOtp = async (event) => {
+    event.preventDefault();
 
-    if (!email || !name) {
-      alert("Please fill all fields");
+    if (!email) {
+      alert("Please enter your email");
       return;
     }
-    localStorage.setItem(
-      "tempUser",
-      JSON.stringify({ email, name })
-    );
 
-    alert("Mock OTP Sent. Use 123456 to login.");
-    navigate("/verify");
+    setLoading(true);
+
+    try {
+      const response = await api.post("/auth/send-otp", {
+        email,
+        purpose: "login"
+      });
+
+      await sendOtpEmail({
+        email,
+        otp: response.data.otpCode
+      });
+
+      localStorage.setItem(
+        "pendingAuth",
+        JSON.stringify({
+          email,
+          purpose: "login",
+          devOtp: response.data.devOtp || response.data.otpCode
+        })
+      );
+
+      navigate("/verify");
+    } catch (error) {
+      alert(error.response?.data?.message || "Unable to send OTP");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h1 className="login-title">Smart Village Marketplace</h1>
-        <p className="login-subtitle">
-          Login using your email to continue
-        </p>
+    <div className="auth-shell">
+      <div className="auth-panel auth-panel-rich">
+        <div className="auth-copy">
+          <span className="eyebrow">Returning user login</span>
+          <h1>Step into live crop intelligence and mandi-ready buying.</h1>
+          <p>
+            Sign in with email OTP to view your district recommendations, order flow,
+            and admin-ready analytics.
+          </p>
+        </div>
 
-        <form onSubmit={handleSendOtp} className="login-form">
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              placeholder="Enter your full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+        <div className="login-box">
+          <h1 className="login-title">Smart Agriculture Control</h1>
+          <p className="login-subtitle">Email OTP login powered for quick access</p>
+
+          <form onSubmit={handleSendOtp} className="login-form">
+            <div className="form-group">
+              <label>Email Address</label>
+              <input
+                type="email"
+                placeholder="Enter your registered email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+              />
+            </div>
+
+            <button type="submit" className="login-btn" disabled={loading}>
+              {loading ? "Sending OTP..." : "Send OTP"}
+            </button>
+          </form>
+
+          <div className="auth-links">
+            <span>First time here?</span>
+            <Link to="/signup">Create account</Link>
           </div>
-
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <button type="submit" className="login-btn">
-            Send OTP
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>© 2026 Smart Village System</p>
         </div>
       </div>
     </div>

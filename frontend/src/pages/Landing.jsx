@@ -1,143 +1,125 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
 import "./Landing.css";
+
+const landingFeatures = [
+  "Public crop browsing without forced login",
+  "District-wise crop demand and recommendations",
+  "AI-led price outlook ready for OpenRouter",
+  "Live admin insights from MongoDB data"
+];
 
 const Landing = () => {
   const navigate = useNavigate();
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".hero-copy > *", {
+        opacity: 0,
+        y: 32,
+        stagger: 0.12,
+        duration: 0.8,
+        ease: "power3.out"
+      });
+
+      gsap.from(".signal-card", {
+        opacity: 0,
+        scale: 0.9,
+        stagger: 0.1,
+        duration: 0.7,
+        delay: 0.3,
+        ease: "back.out(1.6)"
+      });
+    }, rootRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <div className="landing">
-      <nav className="navbar">
-        <div className="logo">🌾 SmartVillage</div>
-
-        <div className="nav-links">
-          <span>Home</span>
-          <span>Features</span>
-          <span>About</span>
-        </div>
-
-        <div className="nav-buttons">
+    <div className="landing-shell" ref={rootRef}>
+      <header className="landing-nav">
+        <div className="brand-mark">Smart Crop Grid</div>
+        <nav className="nav-cluster">
+          <button onClick={() => navigate("/marketplace")}>Explore Crops</button>
           <button onClick={() => navigate("/login")}>Login</button>
-          <button className="signup-btn" onClick={() => navigate("/login")}>
-            Get Started
+          <button className="nav-primary" onClick={() => navigate("/signup")}>
+            Signup
           </button>
-        </div>
-      </nav>
-      <section className="hero">
-        <div className="hero-content">
-          <h1>
-            The Future of <span>Agriculture Commerce</span>
-          </h1>
+        </nav>
+      </header>
 
-          <p>
-            Connecting farmers directly with consumers through a digital ecosystem
-            that ensures transparency, fair pricing, and real-time tracking.
-          </p>
-
-          <div className="hero-buttons">
-            <button onClick={() => navigate("/login")}>
-              Start Buying
-            </button>
-            <button className="secondary">
-              Explore Platform
-            </button>
-          </div>
-
-          <div className="hero-stats">
-            <div>
-              <h2>10K+</h2>
-              <p>Users</p>
+      <main className="landing-main">
+        <section className="hero-grid">
+          <div className="hero-copy">
+            <span className="hero-kicker">District-aware agriculture intelligence</span>
+            <h1>Buy, predict, and manage crops with live data instead of guesswork.</h1>
+            <p>
+              Smart Dashboard System blends public crop access, district-level demand,
+              admin monitoring, and AI prediction into one faster farming marketplace.
+            </p>
+            <div className="hero-actions">
+              <button className="hero-primary" onClick={() => navigate("/marketplace")}>
+                View Public Crops
+              </button>
+              <button className="hero-secondary" onClick={() => navigate("/signup")}>
+                Create Account
+              </button>
             </div>
-            <div>
-              <h2>500+</h2>
-              <p>Farmers</p>
+            <div className="hero-band">
+              <div>
+                <strong>12+</strong>
+                <span>district market lanes</span>
+              </div>
+              <div>
+                <strong>AI</strong>
+                <span>prediction ready</span>
+              </div>
+              <div>
+                <strong>Live</strong>
+                <span>admin revenue view</span>
+              </div>
             </div>
-            <div>
-              <h2>2K+</h2>
-              <p>Orders</p>
+          </div>
+
+          <div className="hero-visual">
+            <div className="hero-orbit hero-orbit-one" />
+            <div className="hero-orbit hero-orbit-two" />
+            <div className="hero-panel">
+              <div className="panel-header">
+                <span>Market Pulse</span>
+                <strong>+14.2%</strong>
+              </div>
+              <div className="signal-grid">
+                {landingFeatures.map((feature) => (
+                  <div key={feature} className="signal-card">
+                    {feature}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="hero-image">
-          <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854" alt="" />
-        </div>
-      </section>
-      <section className="features">
-        <h2>Powerful Features</h2>
-
-        <div className="feature-grid">
-
-          <div className="feature-card">
-            <h3>Direct Farming Network</h3>
-            <p>Eliminate middlemen and connect directly with farmers.</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>Smart Order Tracking</h3>
-            <p>Track your orders from placement to delivery in real-time.</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>Advanced Dashboard</h3>
-            <p>View analytics, spending insights, and order history.</p>
-          </div>
-
-          <div className="feature-card">
-            <h3>🛠 Admin Control Panel</h3>
-            <p>Manage crops, users, and orders efficiently.</p>
-          </div>
-
-        </div>
-      </section>
-      <section className="about">
-        <div className="about-content">
-          <h2>Revolutionizing Rural Economy</h2>
-          <p>
-            Our platform bridges the gap between farmers and consumers,
-            ensuring transparency, better profits, and sustainable growth.
-          </p>
-        </div>
-
-        <div className="about-image">
-          <img src="https://images.unsplash.com/photo-1499529112087-3cb3b73cec95" alt="" />
-        </div>
-      </section>
-
-      <section className="testimonials">
-        <h2>What People Say</h2>
-
-        <div className="testimonial-grid">
-          <div className="testimonial">
-            <p>"Best platform to buy fresh crops directly!"</p>
-            <span>- Rahul</span>
-          </div>
-
-          <div className="testimonial">
-            <p>"Farmers are finally getting fair prices."</p>
-            <span>- Priya</span>
-          </div>
-
-          <div className="testimonial">
-            <p>"Amazing experience and easy to use."</p>
-            <span>- Amit</span>
-          </div>
-        </div>
-      </section>
-      <section className="cta">
-        <h2>Join the Future of Farming 🚀</h2>
-        <p>Start your journey with Smart Village Marketplace today</p>
-
-        <button onClick={() => navigate("/login")}>
-          Get Started Now
-        </button>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="footer">
-        <p>© 2026 Smart Village | Built with </p>
-      </footer>
-
+        <section className="value-strip">
+          <article>
+            <span>01</span>
+            <h3>Open marketplace</h3>
+            <p>Anyone can browse crops first and decide later without forced authentication.</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>Localized crop logic</h3>
+            <p>Recommendations shift with state and district so supply matches real geography.</p>
+          </article>
+          <article>
+            <span>03</span>
+            <h3>Operational admin</h3>
+            <p>Orders, users, revenue, and top-performing crops are pulled from the database.</p>
+          </article>
+        </section>
+      </main>
     </div>
   );
 };

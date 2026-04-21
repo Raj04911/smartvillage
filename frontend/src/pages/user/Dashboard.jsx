@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import "./UserDashboard.css";
 
 const Dashboard = () => {
@@ -7,19 +7,19 @@ const Dashboard = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    const fetchOrders = async () => {
+      try {
+        const res = await api.get(`/orders/user/${user._id || user.email}`);
+        setOrders(res.data.orders);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  const fetchOrders = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/orders/user/${user.email}`
-      );
-      setOrders(res.data.orders);
-    } catch (error) {
-      console.error(error);
+    if (user?.email) {
+      fetchOrders();
     }
-  };
+  }, [user?._id, user?.email]);
 
   const totalSpent = orders.reduce(
     (acc, order) => acc + order.totalAmount,
@@ -34,11 +34,38 @@ const Dashboard = () => {
     (o) => o.status === "Delivered"
   ).length;
 
+  const recentDistricts = [...new Set(
+    orders.flatMap((order) => order.items.map((item) => item.district).filter(Boolean))
+  )]
+    .slice(0, 3)
+    .join(" • ");
+
   return (
     <div className="user-dashboard">
       <div className="dashboard-header">
         <h2>Welcome, {user?.name}</h2>
-        <p>Here is your activity overview</p>
+        <p>Track your crop activity, buying rhythm, and district-level movement from one place.</p>
+      </div>
+
+      <div className="dashboard-hero-panel">
+        <div className="hero-panel-copy">
+          <span className="hero-chip">Buyer Intelligence</span>
+          <h3>Stay ahead of mandi shifts with faster price and demand signals.</h3>
+          <p>
+            Your workspace now blends orders, location-aware crop access, and AI-backed
+            forecasts so buying decisions feel timely instead of reactive.
+          </p>
+        </div>
+        <div className="hero-panel-stats">
+          <div>
+            <strong>{orders.length}</strong>
+            <span>orders tracked</span>
+          </div>
+          <div>
+            <strong>{recentDistricts || "No districts yet"}</strong>
+            <span>active districts</span>
+          </div>
+        </div>
       </div>
 
       <div className="stats-grid">
@@ -95,6 +122,11 @@ const Dashboard = () => {
         <div className="summary-card">
           <h4>Completed</h4>
           <p>{completedOrders} Delivered</p>
+        </div>
+
+        <div className="summary-card">
+          <h4>Focus Region</h4>
+          <p>{user?.district ? `${user.district}, ${user.state}` : "Choose a district filter"}</p>
         </div>
       </div>
     </div>
