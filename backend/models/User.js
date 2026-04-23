@@ -23,6 +23,36 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: ""
     },
+    addressLine: {
+      type: String,
+      default: ""
+    },
+    pincode: {
+      type: String,
+      default: ""
+    },
+    preferredCategory: {
+      type: String,
+      default: ""
+    },
+    preferredSeason: {
+      type: String,
+      default: ""
+    },
+    language: {
+      type: String,
+      default: "English"
+    },
+    coordinates: {
+      lat: {
+        type: Number,
+        default: null
+      },
+      lng: {
+        type: Number,
+        default: null
+      }
+    },
     role: {
       type: String,
       enum: ["admin", "user"],

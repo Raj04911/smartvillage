@@ -114,6 +114,17 @@
   color: var(--muted);
 }
 
+.tracking-map-shell {
+  margin-bottom: 18px;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.tracking-map {
+  width: 100%;
+  height: 260px;
+}
+
 .status-badge {
   padding: 7px 12px;
   border-radius: 999px;

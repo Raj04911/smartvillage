@@ -196,6 +196,46 @@
   padding-bottom: 36px;
 }
 
+.reviews-section {
+  max-width: 1240px;
+  margin: 0 auto 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.reviews-header h2 {
+  margin: 12px 0 0;
+}
+
+.review-card {
+  background: rgba(255, 252, 245, 0.9);
+  border: 1px solid rgba(32, 79, 56, 0.1);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-card span,
+.review-card p {
+  color: var(--muted);
+}
+
+.review-rating {
+  color: var(--accent);
+  font-weight: 800;
+}
+
 .value-strip article {
   padding: 26px;
 }
@@ -244,7 +284,8 @@
   }
 
   .landing-nav,
-  .hero-actions {
+  .hero-actions,
+  .reviews-header {
     flex-direction: column;
     align-items: stretch;
   }

@@ -81,16 +81,24 @@ const connectDB = async () => {
 };
 
 const seedDatabase = async () => {
+  const dummyCropNames = [
+    "Basmati Rice",
+    "Wheat",
+    "Tomato",
+    "Onion",
+    "Sugarcane",
+    "Potato",
+    "Cotton",
+    "Maize"
+  ];
+
+  await Crop.deleteMany({ name: { $in: dummyCropNames } });
+
   const [cropCount, userCount, orderCount] = await Promise.all([
     Crop.countDocuments(),
     User.countDocuments(),
     Order.countDocuments()
   ]);
-
-  if (cropCount === 0) {
-    await Crop.insertMany(cropSeed);
-    console.log("Seeded crops");
-  }
 
   if (userCount === 0) {
     await User.insertMany(userSeed);
@@ -164,6 +172,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/crops", require("./routes/crops"));
 app.use("/api/orders", require("./routes/orders"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/notifications", require("./routes/notifications"));
 
 app.get("/", (req, res) => {
   res.json({ message: "Smart Village Backend Running" });

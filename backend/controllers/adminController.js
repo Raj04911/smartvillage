@@ -15,7 +15,7 @@ exports.getAdminStats = async (req, res, next) => {
 
     const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
     const activeUsers = users.filter((user) => user.status === "Active").length;
-    const pendingOrders = orders.filter((order) => order.status === "Pending").length;
+    const pendingOrders = orders.filter((order) => order.status !== "Delivered").length;
     const districtDemandMap = crops.reduce((acc, crop) => {
       acc[crop.district] = (acc[crop.district] || 0) + (crop.aiScore || 0);
       return acc;

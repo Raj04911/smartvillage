@@ -11,6 +11,7 @@ const AddCrop = () => {
     stock: "",
     category: "",
     description: "",
+    image: "",
     state: "",
     district: "",
     season: "",
@@ -70,6 +71,7 @@ const AddCrop = () => {
         stock: "",
         category: "",
         description: "",
+        image: "",
         state: "",
         district: "",
         season: "",
@@ -114,10 +116,21 @@ const AddCrop = () => {
               <input type="text" name="category" value={formData.category} onChange={handleChange} />
             </div>
 
-            <div className="form-group">
-              <label>Season</label>
-              <input type="text" name="season" value={formData.season} onChange={handleChange} />
-            </div>
+          <div className="form-group">
+            <label>Season</label>
+            <input type="text" name="season" value={formData.season} onChange={handleChange} />
+          </div>
+          </div>
+
+          <div className="form-group">
+            <label>Crop Image Link</label>
+            <input
+              type="url"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              placeholder="https://example.com/crop-image.jpg"
+            />
           </div>
 
           <div className="form-row">

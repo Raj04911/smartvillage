@@ -63,24 +63,28 @@ const Signup = () => {
         purpose: "signup"
       });
 
-      await sendOtpEmail({
+      const emailResult = await sendOtpEmail({
         email: formData.email,
         name: formData.name,
         otp: response.data.otpCode
       });
 
+      if (!emailResult.sent) {
+        throw new Error(emailResult.reason || "OTP email was not sent");
+      }
+
       localStorage.setItem(
         "pendingAuth",
         JSON.stringify({
           ...formData,
-          purpose: "signup",
-          devOtp: response.data.devOtp || response.data.otpCode
+          purpose: "signup"
         })
       );
 
+      alert("OTP sent to your email.");
       navigate("/verify");
     } catch (error) {
-      alert(error.response?.data?.message || "Unable to send OTP");
+      alert(error.response?.data?.message || error.message || "Unable to send OTP");
     } finally {
       setLoading(false);
     }

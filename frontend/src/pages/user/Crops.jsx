@@ -25,6 +25,7 @@ const Crops = () => {
   });
   const [recommendations, setRecommendations] = useState([]);
   const [predictionMap, setPredictionMap] = useState({});
+  const [predictionLoadingMap, setPredictionLoadingMap] = useState({});
   const [quantities, setQuantities] = useState({});
 
   useEffect(() => {
@@ -84,6 +85,11 @@ const Crops = () => {
   }, [selected.state, selected.district]);
 
   const handlePrediction = async (cropId) => {
+    setPredictionLoadingMap((prev) => ({
+      ...prev,
+      [cropId]: true
+    }));
+
     try {
       const response = await api.get(`/crops/${cropId}/predict`);
       setPredictionMap((prev) => ({
@@ -92,6 +98,12 @@ const Crops = () => {
       }));
     } catch (error) {
       console.error(error);
+      alert(error.response?.data?.message || "AI not connected.");
+    } finally {
+      setPredictionLoadingMap((prev) => ({
+        ...prev,
+        [cropId]: false
+      }));
     }
   };
 
@@ -245,6 +257,7 @@ const Crops = () => {
               crop={crop}
               quantity={quantities[crop._id]}
               prediction={predictionMap[crop._id]}
+              predictionLoading={Boolean(predictionLoadingMap[crop._id])}
               onPredict={handlePrediction}
               onQuantityChange={handleQuantityChange}
               onAdd={handleAddToCart}

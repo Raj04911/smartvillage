@@ -58,8 +58,29 @@
   gap: 12px;
 }
 
+.settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.location-chip {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(32, 79, 56, 0.08);
+  color: var(--brand);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .settings-grid {
     grid-template-columns: 1fr;
+  }
+
+  .settings-actions {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

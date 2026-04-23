@@ -68,11 +68,7 @@ const VerifyOtp = () => {
           </button>
         </form>
 
-        {pendingAuth?.devOtp ? (
-          <div className="dev-otp-note">Development OTP: {pendingAuth.devOtp}</div>
-        ) : (
-          <div className="dev-otp-note">Check your inbox for the OTP email.</div>
-        )}
+        <div className="dev-otp-note">Check your inbox for the OTP email.</div>
       </div>
     </div>
   );

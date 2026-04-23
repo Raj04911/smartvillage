@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
+import api from "../utils/api";
 import "./Landing.css";
 
 const landingFeatures = [
@@ -13,6 +14,8 @@ const landingFeatures = [
 const Landing = () => {
   const navigate = useNavigate();
   const rootRef = useRef(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewIndex, setReviewIndex] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -36,6 +39,21 @@ const Landing = () => {
 
     return () => ctx.revert();
   }, []);
+
+  useEffect(() => {
+    const loadReviews = async () => {
+      try {
+        const response = await api.get("/orders/reviews/all");
+        setReviews(response.data.reviews);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadReviews();
+  }, []);
+
+  const activeReview = reviews[reviewIndex];
 
   return (
     <div className="landing-shell" ref={rootRef}>
@@ -118,6 +136,37 @@ const Landing = () => {
             <h3>Operational admin</h3>
             <p>Orders, users, revenue, and top-performing crops are pulled from the database.</p>
           </article>
+        </section>
+
+        <section className="reviews-section">
+          <div className="reviews-header">
+            <div>
+              <span className="hero-kicker">Customer Reviews</span>
+              <h2>See what customers are saying after delivery.</h2>
+            </div>
+            {reviews.length > 1 ? (
+              <button
+                className="hero-secondary"
+                onClick={() => setReviewIndex((prev) => (prev + 1) % reviews.length)}
+              >
+                Next Review
+              </button>
+            ) : null}
+          </div>
+
+          {activeReview ? (
+            <div className="review-card">
+              <strong>{activeReview.userName}</strong>
+              <span>{activeReview.cropName}</span>
+              <p>{activeReview.comment}</p>
+              <div className="review-rating">{activeReview.rating}/5</div>
+            </div>
+          ) : (
+            <div className="review-card">
+              <strong>No reviews yet</strong>
+              <p>Delivered order reviews will appear here one at a time.</p>
+            </div>
+          )}
         </section>
       </main>
     </div>

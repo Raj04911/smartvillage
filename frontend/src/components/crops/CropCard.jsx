@@ -6,6 +6,7 @@ const CropCard = ({
   crop,
   quantity,
   prediction,
+  predictionLoading,
   onQuantityChange,
   onAdd,
   onPredict,
@@ -52,8 +53,12 @@ const CropCard = ({
             placeholder="Qty"
           />
 
-          <button className="predict-btn" onClick={() => onPredict(crop._id)}>
-            AI Predict
+          <button
+            className="predict-btn"
+            onClick={() => onPredict(crop._id)}
+            disabled={predictionLoading}
+          >
+            {predictionLoading ? "Predicting..." : "AI Predict"}
           </button>
           <button className="add-cart-btn" onClick={() => onAdd(crop)}>
             {canOrder ? "Add to Cart" : "Login to Order"}
@@ -62,9 +67,7 @@ const CropCard = ({
 
         {prediction ? (
           <div className="prediction-box">
-            <strong>
-              {prediction.source === "openrouter" ? "OpenRouter AI" : "Smart Heuristic"} Prediction
-            </strong>
+            <strong>AI Prediction</strong>
             <p>{prediction.summary}</p>
             <span>Predicted price: {formatCurrency(prediction.predictedPrice)}</span>
             <span>Confidence: {prediction.confidence}%</span>

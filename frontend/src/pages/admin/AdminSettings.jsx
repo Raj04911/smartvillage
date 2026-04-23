@@ -6,7 +6,10 @@ const AdminSettings = () => {
     maintenance: false,
     emailNotifications: true,
     autoApproveOrders: false,
-    enableRegistration: true
+    enableRegistration: true,
+    reviewModeration: true,
+    liveTracking: true,
+    openMarketAccess: true
   });
 
   const handleChange = (key) => {
@@ -20,12 +23,13 @@ const AdminSettings = () => {
     <div className="admin-page">
       <div className="admin-header">
         <h2>System Settings</h2>
+        <p>Control platform-wide commerce, notifications, reviews, and live tracking behavior.</p>
       </div>
 
       <div className="settings-card">
         {Object.keys(settings).map((key) => (
           <div key={key} className="setting-row">
-            <span>{key}</span>
+            <span>{key.replace(/([A-Z])/g, " $1")}</span>
             <input
               type="checkbox"
               checked={settings[key]}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../utils/api";
+import TrackingMap from "../../components/orders/TrackingMap";
 import { formatCurrency } from "../../utils/formatCurrency";
 import "./Orders.css";
 
@@ -167,6 +168,8 @@ const Orders = () => {
                   Delivery region: {order.district}, {order.state}
                 </span>
               </div>
+
+              <TrackingMap routeMap={order.routeMap} />
 
               <div className="order-details">
                 <table className="details-table">

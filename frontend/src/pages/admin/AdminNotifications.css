@@ -1,21 +1,30 @@
 .notification-card {
-  padding: 15px;
-  border-radius: 10px;
+  padding: 18px;
+  border-radius: 18px;
   margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
   cursor: pointer;
+  width: 100%;
+  border: 1px solid rgba(32, 79, 56, 0.1);
+  box-shadow: var(--shadow);
+  text-align: left;
 }
 
 .unread {
-  background: #dcfce7;
+  background: #fef3c7;
 }
 
 .read {
-  background: #f3f4f6;
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .status {
   font-size: 12px;
   font-weight: 600;
+}
+
+.notification-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
 }

@@ -39,6 +39,36 @@ const orderSchema = new mongoose.Schema({
       completedAt: Date
     }
   ],
+  deliveryAddress: {
+    addressLine: {
+      type: String,
+      default: ""
+    },
+    district: {
+      type: String,
+      default: ""
+    },
+    state: {
+      type: String,
+      default: ""
+    },
+    pincode: {
+      type: String,
+      default: ""
+    }
+  },
+  routeMap: {
+    source: {
+      label: String,
+      lat: Number,
+      lng: Number
+    },
+    destination: {
+      label: String,
+      lat: Number,
+      lng: Number
+    }
+  },
   review: {
     rating: {
       type: Number,

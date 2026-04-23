@@ -1,5 +1,6 @@
 const axios = require("axios");
 const Crop = require("../models/Crop");
+const Notification = require("../models/Notification");
 
 const fallbackStateDistrictMap = {
   Bihar: ["Purnia", "Muzaffarpur", "Bhagalpur", "Gaya"],
@@ -196,10 +197,19 @@ const getHeuristicPrediction = async (crop) => {
 };
 
 const tryParseJson = (content) => {
+  if (!content) {
+    return null;
+  }
+
+  const normalizedContent =
+    typeof content === "string"
+      ? content.trim().replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/\s*```$/, "")
+      : "";
+
   try {
-    return JSON.parse(content);
+    return JSON.parse(normalizedContent);
   } catch (error) {
-    const match = content.match(/\{[\s\S]*\}/);
+    const match = normalizedContent.match(/\{[\s\S]*\}/);
     if (!match) {
       return null;
     }
@@ -212,92 +222,133 @@ const tryParseJson = (content) => {
   }
 };
 
+const getModelCandidates = () => {
+  const configuredModel = (process.env.OPENROUTER_MODEL || "").trim();
+
+  if (!configuredModel) {
+    return [];
+  }
+
+  const normalizedCandidates = [
+    configuredModel,
+    configuredModel.replace(/:free$/i, ""),
+    configuredModel.replace(/:free$/i, ":online"),
+    "deepseek/deepseek-chat-v3-0324",
+    "openai/gpt-4o-mini"
+  ].filter(Boolean);
+
+  return [...new Set(normalizedCandidates)];
+};
+
 const getOpenRouterPrediction = async (crop) => {
   if (!process.env.OPENROUTER_API_KEY || !process.env.OPENROUTER_MODEL) {
     return null;
   }
 
   const context = await buildMarketContext(crop);
+  const modelCandidates = getModelCandidates();
 
-  try {
-    const response = await axios.post(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        model: process.env.OPENROUTER_MODEL,
-        temperature: 0.95,
-        response_format: {
-          type: "json_object"
+  for (const modelName of modelCandidates) {
+    try {
+      const response = await axios.post(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          model: modelName,
+          temperature: 0.85,
+          max_tokens: 700,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a senior agri-market intelligence analyst for Indian district crop markets. Reply with a single valid JSON object only. Do not add markdown, code fences, or extra text. Use exactly these keys: summary, predictedPrice, confidence, recommendedAction, outlook, riskLevel, bestWindow, marketNarrative, actionSteps."
+            },
+            {
+              role: "user",
+              content: JSON.stringify({
+                snapshotDate: new Date().toISOString(),
+                crop: {
+                  name: crop.name,
+                  category: crop.category,
+                  state: crop.state,
+                  district: crop.district,
+                  currentPrice: crop.price,
+                  currentStock: crop.stock,
+                  season: crop.season,
+                  demandLevel: crop.demandLevel,
+                  aiScore: crop.aiScore,
+                  trend: crop.trend,
+                  priceHistory: crop.priceHistory,
+                  demandHistory: crop.demandHistory
+                },
+                marketContext: context,
+                instructions: [
+                  "Use realistic short-term outlook for next 7 days.",
+                  "Predicted price must be numeric and in rupees per kg.",
+                  "Confidence must be 0-100.",
+                  "Keep summary under 45 words.",
+                  "Recommended action should be practical for a farmer or buyer.",
+                  "marketNarrative must be 3 lines separated by newline characters.",
+                  "actionSteps must contain exactly 3 concise strings.",
+                  "If you are uncertain, still return best-effort valid JSON with realistic values."
+                ]
+              })
+            }
+          ]
         },
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a senior agri-market intelligence analyst for Indian district crop markets. Respond with valid JSON only using keys summary, predictedPrice, confidence, recommendedAction, outlook, riskLevel, bestWindow, marketNarrative, actionSteps."
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
+            "X-Title": process.env.OPENROUTER_APP_NAME || "Smart Dashboard System"
           },
-          {
-            role: "user",
-            content: JSON.stringify({
-              snapshotDate: new Date().toISOString(),
-              crop: {
-                name: crop.name,
-                category: crop.category,
-                state: crop.state,
-                district: crop.district,
-                currentPrice: crop.price,
-                currentStock: crop.stock,
-                season: crop.season,
-                demandLevel: crop.demandLevel,
-                aiScore: crop.aiScore,
-                trend: crop.trend,
-                priceHistory: crop.priceHistory,
-                demandHistory: crop.demandHistory
-              },
-              marketContext: context,
-              instructions: [
-                "Use realistic short-term outlook for next 7 days.",
-                "Predicted price must be numeric and in rupees per kg.",
-                "Confidence must be 0-100.",
-                "Keep summary under 45 words.",
-                "Recommended action should be practical for a farmer or buyer.",
-                "marketNarrative must be 3 lines separated by newline characters.",
-                "actionSteps must contain exactly 3 concise strings."
-              ]
-            })
-          }
-        ]
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-          "Content-Type": "application/json",
-          "HTTP-Referer": process.env.OPENROUTER_SITE_URL || "http://localhost:3000",
-          "X-Title": process.env.OPENROUTER_APP_NAME || "Smart Dashboard System"
-        },
-        timeout: 15000
+          timeout: 15000
+        }
+      );
+
+      const content = response.data?.choices?.[0]?.message?.content;
+      const resolvedContent = Array.isArray(content)
+        ? content
+            .map((item) => item?.text || item?.content || "")
+            .join("")
+            .trim()
+        : content;
+
+      if (!resolvedContent) {
+        continue;
       }
-    );
 
-    const content = response.data?.choices?.[0]?.message?.content;
+      const parsed = tryParseJson(resolvedContent);
 
-    if (!content) {
-      return null;
+      if (!parsed) {
+        console.error("OpenRouter returned non-JSON prediction content:", resolvedContent);
+        continue;
+      }
+
+      return normalizePrediction(crop, parsed, context, "openrouter");
+    } catch (error) {
+      console.error(
+        `OpenRouter prediction failed for model ${modelName}:`,
+        error.response?.status,
+        error.response?.data || error.message
+      );
     }
-
-    const parsed = tryParseJson(content);
-
-    if (!parsed) {
-      return null;
-    }
-
-    return normalizePrediction(crop, parsed, context, "openrouter");
-  } catch (error) {
-    return null;
   }
+
+  return null;
 };
 
 exports.createCrop = async (req, res) => {
   try {
     const crop = await Crop.create(req.body);
+
+    await Notification.create({
+      audience: "admin",
+      userId: null,
+      title: "New crop listed",
+      message: `${crop.name} was added for ${crop.district}, ${crop.state}.`,
+      type: "crop"
+    });
 
     res.status(201).json({
       success: true,
@@ -578,12 +629,28 @@ exports.getPrediction = async (req, res) => {
       });
     }
 
+    if (!process.env.OPENROUTER_API_KEY || !process.env.OPENROUTER_MODEL) {
+      return res.status(503).json({
+        success: false,
+        aiConnected: false,
+        message: "AI not connected. Please configure the OpenRouter API."
+      });
+    }
+
     const aiPrediction = await getOpenRouterPrediction(crop);
-    const fallbackPrediction = await getHeuristicPrediction(crop);
+
+    if (!aiPrediction) {
+      return res.status(502).json({
+        success: false,
+        aiConnected: false,
+        message: "AI not connected or the OpenRouter model/key is invalid."
+      });
+    }
 
     res.status(200).json({
       success: true,
-      prediction: aiPrediction || fallbackPrediction
+      aiConnected: true,
+      prediction: aiPrediction
     });
   } catch (error) {
     res.status(500).json({

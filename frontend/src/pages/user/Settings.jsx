@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import api from "../../utils/api";
 import { fallbackLocationFilters } from "../../utils/locationOptions";
 import "./Settings.css";
 
@@ -40,7 +41,12 @@ const Settings = () => {
         email: storedUser.email || "",
         phone: storedUser.phone || "",
         state: storedUser.state || "",
-        district: storedUser.district || ""
+        district: storedUser.district || "",
+        address: storedUser.addressLine || "",
+        pincode: storedUser.pincode || "",
+        preferredCategory: storedUser.preferredCategory || "",
+        preferredSeason: storedUser.preferredSeason || "",
+        language: storedUser.language || "English"
       }));
     }
   }, [storedUser]);
@@ -68,14 +74,26 @@ const Settings = () => {
     }));
   };
 
-  const handleSaveProfile = () => {
-    const updatedUser = {
-      ...storedUser,
-      ...profile
-    };
+  const handleSaveProfile = async () => {
+    try {
+      const response = await api.put(`/auth/users/${storedUser._id}`, {
+        name: profile.name,
+        email: profile.email,
+        phone: profile.phone,
+        state: profile.state,
+        district: profile.district,
+        addressLine: profile.address,
+        pincode: profile.pincode,
+        preferredCategory: profile.preferredCategory,
+        preferredSeason: profile.preferredSeason,
+        language: profile.language
+      });
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    alert("Profile updated successfully");
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      alert("Profile updated successfully");
+    } catch (error) {
+      alert("Unable to update profile");
+    }
   };
 
   const handleChangePassword = () => {
