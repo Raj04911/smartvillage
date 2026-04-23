@@ -19,7 +19,7 @@ const normalizedFallbackStateDistrictMap = Object.fromEntries(
   ])
 );
 
-const fallbackCategories = ["Cereal", "Vegetable", "Cash Crop", "Fiber", "Pulse"];
+const fallbackCategories = ["Cereeal", "Vegetable", "Cash Crop", "Fiber", "Pulse"];
 const fallbackSeasons = ["Kharif", "Rabi", "Summer", "Annual", "Year-round"];
 
 const average = (values = []) => {
