@@ -429,22 +429,28 @@ exports.getCropFilters = async (req, res) => {
       return acc;
     }, {});
 
-    const resolvedStateDistrictMap =
-      Object.keys(stateDistrictMap).length > 0
-        ? stateDistrictMap
-        : normalizedFallbackStateDistrictMap;
-    const resolvedStates =
-      states.length > 0 ? states : Object.keys(normalizedFallbackStateDistrictMap).sort();
-    const resolvedDistricts =
-      districts.length > 0
-        ? districts
-        : [
-            ...new Set(
-              Object.values(normalizedFallbackStateDistrictMap).flat()
-            )
-          ].sort();
-    const resolvedCategories = categories.length > 0 ? categories : fallbackCategories;
-    const resolvedSeasons = seasons.length > 0 ? seasons : fallbackSeasons;
+    const mergedStateDistrictMap = {
+      ...normalizedFallbackStateDistrictMap
+    };
+
+    Object.entries(stateDistrictMap).forEach(([state, stateDistricts]) => {
+      mergedStateDistrictMap[state] = [
+        ...new Set([...(mergedStateDistrictMap[state] || []), ...stateDistricts])
+      ].sort();
+    });
+
+    const resolvedStateDistrictMap = mergedStateDistrictMap;
+    const resolvedStates = [
+      ...new Set([...Object.keys(normalizedFallbackStateDistrictMap), ...states])
+    ].sort();
+    const resolvedDistricts = [
+      ...new Set([
+        ...Object.values(normalizedFallbackStateDistrictMap).flat(),
+        ...districts
+      ])
+    ].sort();
+    const resolvedCategories = [...new Set([...fallbackCategories, ...categories])].sort();
+    const resolvedSeasons = [...new Set([...fallbackSeasons, ...seasons])].sort();
 
     res.status(200).json({
       success: true,

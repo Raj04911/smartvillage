@@ -17,8 +17,8 @@ const Crops = () => {
     stateDistrictMap: {}
   });
   const [selected, setSelected] = useState({
-    state: user?.state || "",
-    district: user?.district || "",
+    state: "",
+    district: "",
     category: "",
     season: "",
     search: ""
@@ -161,11 +161,27 @@ const Crops = () => {
             before deciding to signup or buy.
           </p>
         </div>
-        {!user ? (
-          <button className="market-cta" onClick={() => navigate("/signup")}>
-            Signup to Order
-          </button>
-        ) : null}
+        <div className="market-hero-actions">
+          {user?.state || user?.district ? (
+            <button
+              className="market-secondary-cta"
+              onClick={() =>
+                setSelected((prev) => ({
+                  ...prev,
+                  state: user?.state || "",
+                  district: user?.district || ""
+                }))
+              }
+            >
+              Use My Region
+            </button>
+          ) : null}
+          {!user ? (
+            <button className="market-cta" onClick={() => navigate("/signup")}>
+              Signup to Order
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <div className="market-filters">
